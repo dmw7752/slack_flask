@@ -18,7 +18,7 @@ def parse_html(html):
   return match.group(0)
 
 @app.route('/')
-def main()
+def main():
   return 'Hello World!'
 
 @app.route('/traffic')
