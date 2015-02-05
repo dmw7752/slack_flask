@@ -17,6 +17,10 @@ def parse_html(html):
   match = re.search(r'In current.*', html, re.MULTILINE)
   return match.group(0)
 
+@app.route('/')
+def main()
+  return 'Hello World!'
+
 @app.route('/traffic')
 def traffic():
   to_work_html = get_traffic_info('https://www.google.com/maps/dir/448+Fathom+Dr,+San+Mateo,+CA+94404/Box,+El+Camino+Real,+Los+Altos,+CA/@37.4775139,-122.3671032,11z/data=!3m1!4b1!4m13!4m12!1m5!1m1!1s0x808f9ebe43184e3b:0xed88b704dbd9a898!2m2!1d-122.286044!2d37.568132!1m5!1m1!1s0x808fbaf3d1c8ade1:0xb619587d60dc1a37!2m2!1d-122.116445!2d37.402666')
