@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup
 import urllib2
 import re
+import os
 from flask import Flask
 app = Flask(__name__)
 
@@ -34,4 +35,5 @@ def traffic():
   return response
 
 if __name__ == '__main__':
-  app.run()
+  port = int(os.environ.get("PORT", 5000))
+  app.run(host='0.0.0.0', port=port)
