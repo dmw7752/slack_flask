@@ -44,14 +44,16 @@ def traffic():
   response = 'TO WORK - ' + to_work + '\nTO HOME - ' + to_home
   return response
 
-@app.route('/stock')
+@app.route('/stock', meathods=['POST'])
 def stock():
+  print request.form
   box = get_stock('NYSE', 'BOX')
   linkedin = get_stock('NYSE', 'LNKD')
 
-  response = 'Box: $' + box + '\nLinkedin: $' + linkedin
+  response = '{ "text": "It worked!" }'
+  #response = 'Box: $' + box + '\nLinkedin: $' + linkedin
   return response
 
 if __name__ == '__main__':
-  port = int(os.environ.get("PORT", 5000))
-  app.run(host='0.0.0.0', port=port)
+  #port = int(os.environ.get("PORT", 5000))
+  app.run(host='127.0.0.1', port=5000)
