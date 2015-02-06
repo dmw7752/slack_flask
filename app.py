@@ -44,7 +44,7 @@ def traffic():
   response = 'TO WORK - ' + to_work + '\nTO HOME - ' + to_home
   return response
 
-@app.route('/stock', meathods=['POST'])
+@app.route('/stock', methods=['POST'])
 def stock():
   print request.form
   box = get_stock('NYSE', 'BOX')
