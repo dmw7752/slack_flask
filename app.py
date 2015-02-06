@@ -5,6 +5,8 @@ import re
 import os
 import json
 from flask import Flask
+from flask import jsonify
+from flask import request
 app = Flask(__name__)
 
 def get_traffic_info(url):
@@ -46,7 +48,7 @@ def traffic():
 
 @app.route('/stock', methods=['POST'])
 def stock():
-  #print request.form
+  print request.form
   #box = get_stock('NYSE', 'BOX')
   #linkedin = get_stock('NYSE', 'LNKD')
 
@@ -57,3 +59,5 @@ def stock():
 if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))
   app.run(host='0.0.0.0', port=port)
+  #app.debug = True
+  #app.run(host='127.0.0.1', port=5000)
