@@ -35,7 +35,7 @@ def get_stock(exchange, symbol):
 def main():
   return 'Hello World!'
 
-@app.route('/traffic')
+@app.route('/traffic', methods=['POST'])
 def traffic():
   to_work_html = get_traffic_info('https://www.google.com/maps/dir/448+Fathom+Dr,+San+Mateo,+CA+94404/Box,+El+Camino+Real,+Los+Altos,+CA/@37.4775139,-122.3671032,11z/data=!3m1!4b1!4m13!4m12!1m5!1m1!1s0x808f9ebe43184e3b:0xed88b704dbd9a898!2m2!1d-122.286044!2d37.568132!1m5!1m1!1s0x808fbaf3d1c8ade1:0xb619587d60dc1a37!2m2!1d-122.116445!2d37.402666')
   to_home_html = get_traffic_info('https://www.google.com/maps/dir/Box,+El+Camino+Real,+Los+Altos,+CA/448+Fathom+Dr,+San+Mateo,+CA+94404/@37.4656426,-122.3656023,11z/data=!3m1!4b1!4m13!4m12!1m5!1m1!1s0x808fbaf3d1c8ade1:0xb619587d60dc1a37!2m2!1d-122.116445!2d37.402666!1m5!1m1!1s0x808f9ebe43184e3b:0xed88b704dbd9a898!2m2!1d-122.286044!2d37.568132')
@@ -43,17 +43,17 @@ def traffic():
   to_work = parse_html(to_work_html)
   to_home = parse_html(to_home_html)
 
-  response = 'TO WORK - ' + to_work + '\nTO HOME - ' + to_home
+  commute = 'TO WORK - ' + to_work + '\nTO HOME - ' + to_home
+  response = jsonify(text=commute)
   return response
 
 @app.route('/stock', methods=['POST'])
 def stock():
-  print request.form
-  #box = get_stock('NYSE', 'BOX')
-  #linkedin = get_stock('NYSE', 'LNKD')
+  box = get_stock('NYSE', 'BOX')
+  linkedin = get_stock('NYSE', 'LNKD')
 
-  response = jsonify(text="It worked!")
-  #response = 'Box: $' + box + '\nLinkedin: $' + linkedin
+  stocks = 'Box: $' + box + '\nLinkedin: $' + linkedin
+  response = jsonify(text=stocks)
   return response
 
 if __name__ == '__main__':
