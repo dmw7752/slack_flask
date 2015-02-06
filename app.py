@@ -49,7 +49,7 @@ def stock():
   box = get_stock('NYSE', 'BOX')
   linkedin = get_stock('NYSE', 'LNKD')
 
-  response = 'Box: ' + box + '\nLinkedin: ' + linkedin
+  response = 'Box: $' + box + '\nLinkedin: $' + linkedin
   return response
 
 if __name__ == '__main__':
