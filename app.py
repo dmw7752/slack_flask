@@ -46,11 +46,11 @@ def traffic():
 
 @app.route('/stock', methods=['POST'])
 def stock():
-  print request.form
-  box = get_stock('NYSE', 'BOX')
-  linkedin = get_stock('NYSE', 'LNKD')
+  #print request.form
+  #box = get_stock('NYSE', 'BOX')
+  #linkedin = get_stock('NYSE', 'LNKD')
 
-  response = '{ "text": "It worked!" }'
+  response = jsonify(text="It worked!")
   #response = 'Box: $' + box + '\nLinkedin: $' + linkedin
   return response
 
