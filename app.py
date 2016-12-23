@@ -50,9 +50,9 @@ def traffic():
 @app.route('/stock', methods=['POST'])
 def stock():
   box = get_stock('NYSE', 'BOX')
-  linkedin = get_stock('NYSE', 'LNKD')
+  microsoft = get_stock('NYSE', 'MSFT')
 
-  stocks = 'Box: $' + box + '\nLinkedin: $' + linkedin
+  stocks = 'Box: $' + box + '\nMicrosoft: $' + microsoft
   response = jsonify(text=stocks)
   return response
 
