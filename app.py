@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import json
-import requests
+from urllib import requests
 from flask import Flask
 from flask import jsonify
 from flask import request
