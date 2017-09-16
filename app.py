@@ -26,15 +26,9 @@ def main():
 @app.route('/stock', methods=['POST'])
 def stock():
   box = get_stock('NYSE', 'BOX')
-<<<<<<< HEAD
   msft = get_stock("NASDAQ", "MSFT")
 
   stocks = 'BOX: $' + box + '\nMSFT: $' + msft
-=======
-  microsoft = get_stock('NYSE', 'MSFT')
-
-  stocks = 'Box: $' + box + '\nMicrosoft: $' + microsoft
->>>>>>> d0dc4c6a3a859b46ef3598fce8325cdd47027db0
   response = jsonify(text=stocks)
   return response
 
