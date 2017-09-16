@@ -19,6 +19,14 @@ def get_stock(exchange, symbol):
   last = last.split('"')[1::2][1]
   return last
 
+def get_crypto():
+  url = "https://api.coinbase.com/v2/prices/spot?currency=USD"
+
+  r = requests.get(url)
+  j = json.loads(r.text)
+  price = j['data']['amount']
+  return price
+
 @app.route('/')
 def main():
   return 'Hello World! ' + os.environ.get('TEST_KEY', None)
@@ -27,8 +35,9 @@ def main():
 def stock():
   box = get_stock('NYSE', 'BOX')
   msft = get_stock("NASDAQ", "MSFT")
+  btc = get_crypto()
 
-  stocks = 'BOX: $' + box + '\nMSFT: $' + msft
+  stocks = 'BOX: $' + box + '\nMSFT: $' + msft + '\nBTC: $' + btc
   response = jsonify(text=stocks)
   return response
 
