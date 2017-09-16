@@ -21,7 +21,7 @@ def get_stock(exchange, symbol):
 
 @app.route('/')
 def main():
-  return 'Hello World!'
+  return 'Hello World! ' + os.environ.get('TEST_KEY', None)
 
 @app.route('/stock', methods=['POST'])
 def stock():
