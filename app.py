@@ -16,7 +16,12 @@ def get_stock(symbol):
       last = line
       break
 
-  last = last.split('"')[1::2][1]
+  # finance.google.com returns 200 even if stock
+  # ticker doesn't exist. Error handling here instead.
+  try:
+      last = last.split('"')[1::2][1]
+  except UnboundLocalError:
+          last = '0.00'
   return last
 
 
@@ -36,12 +41,14 @@ def main():
 
 @app.route('/stock', methods=['POST'])
 def stock():
-  box = get_stock('BOX')
-  msft = get_stock('MSFT')
+  tickers = ['BOX', 'MSFT', 'SLACK']
+  prices = [ (ticker, get_stock(ticker)) for ticker in tickers ]
+  stocks = ''
+  for price in prices:
+      stocks += '%s: $%s\n' % (price[0], price[1])
   btc = get_crypto()
-  slack = '0'
+  stocks += 'BTC: $%s' % btc
 
-  stocks = 'BOX: $' + box + '\nMSFT: $' + msft + '\nBTC: $' + btc + '\nSLACK: $' + slack
   response = jsonify(text=stocks)
   return response
 
