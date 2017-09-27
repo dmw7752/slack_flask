@@ -7,8 +7,8 @@ from flask import jsonify
 from flask import request
 app = Flask(__name__)
 
-def get_stock(exchange, symbol):
-  url = "http://finance.google.com/finance?q=%s:%s&output=json"%(exchange,symbol)
+def get_stock(symbol):
+  url = "http://finance.google.com/finance?q=%s&output=json" % symbol
 
   r = requests.get(url)
   for line in r.text.split("\n"):
@@ -19,6 +19,7 @@ def get_stock(exchange, symbol):
   last = last.split('"')[1::2][1]
   return last
 
+
 def get_crypto():
   url = "https://api.coinbase.com/v2/prices/spot?currency=USD"
 
@@ -27,17 +28,20 @@ def get_crypto():
   price = j['data']['amount']
   return price
 
+
 @app.route('/')
 def main():
   return 'Hello World! ' + os.environ.get('TEST_KEY', None)
 
+
 @app.route('/stock', methods=['POST'])
 def stock():
-  box = get_stock('NYSE', 'BOX')
-  msft = get_stock("NASDAQ", "MSFT")
+  box = get_stock('BOX')
+  msft = get_stock('MSFT')
   btc = get_crypto()
+  slack = '0'
 
-  stocks = 'BOX: $' + box + '\nMSFT: $' + msft + '\nBTC: $' + btc
+  stocks = 'BOX: $' + box + '\nMSFT: $' + msft + '\nBTC: $' + btc + '\nSLACK: $' + slack
   response = jsonify(text=stocks)
   return response
 
