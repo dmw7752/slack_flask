@@ -7,8 +7,8 @@ from flask import jsonify
 from flask import request
 app = Flask(__name__)
 
-def get_stock(exchange, symbol):
-  url = "http://finance.google.com/finance?q=%s:%s&output=json"%(exchange,symbol)
+def get_stock(symbol):
+  url = "http://finance.google.com/finance?q=%s&output=json" % symbol
 
   r = requests.get(url)
   for line in r.text.split("\n"):
@@ -16,8 +16,14 @@ def get_stock(exchange, symbol):
       last = line
       break
 
-  last = last.split('"')[1::2][1]
+  # finance.google.com returns 200 even if stock
+  # ticker doesn't exist. Error handling here instead.
+  try:
+      last = last.split('"')[1::2][1]
+  except UnboundLocalError:
+          last = '0.00'
   return last
+
 
 def get_crypto():
   url = "https://api.coinbase.com/v2/prices/spot?currency=USD"
@@ -27,17 +33,22 @@ def get_crypto():
   price = j['data']['amount']
   return price
 
+
 @app.route('/')
 def main():
   return 'Hello World! ' + os.environ.get('TEST_KEY', None)
 
+
 @app.route('/stock', methods=['POST'])
 def stock():
-  box = get_stock('NYSE', 'BOX')
-  msft = get_stock("NASDAQ", "MSFT")
+  tickers = ['BOX', 'MSFT', 'SLACK']
+  prices = [ (ticker, get_stock(ticker)) for ticker in tickers ]
+  stocks = ''
+  for price in prices:
+      stocks += '%s: $%s\n' % (price[0], price[1])
   btc = get_crypto()
+  stocks += 'BTC: $%s' % btc
 
-  stocks = 'BOX: $' + box + '\nMSFT: $' + msft + '\nBTC: $' + btc
   response = jsonify(text=stocks)
   return response
 
