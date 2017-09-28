@@ -4,13 +4,15 @@ import os
 import requests
 
 from flask import Flask, jsonify, request
+
 app = Flask(__name__)
 
-def get_stock(cids):
+def get_stock(ids):
     """Use Google's Finance API to retrieve stock prices"""
 
     # Retrieving all the stock prices at once is much faster
-    url = "https://finance.google.com/finance/data?dp=mra&catid=all&output=json&cid=%s" % cids
+    # We are required to use the "id" in this case.
+    url = "https://finance.google.com/finance/data?dp=mra&catid=all&output=json&cid=%s" % ids
 
     r = requests.get(url)
     response = r.json()
@@ -31,6 +33,7 @@ def get_stock(cids):
 
 def get_crypto():
     """Use coinbase API to return current price of BTC"""
+
     url = "https://api.coinbase.com/v2/prices/spot?currency=USD"
 
     r = requests.get(url)
@@ -46,12 +49,12 @@ def main():
 
 @app.route('/stock', methods=['POST'])
 def stock():
-    # {'TICKER':'ID'} from finance.google.com/finance?q=SYMBOL
     # TODO: Move this into a config.
+    # ID retrived from finance.google.com/finance?q=SYMBOL&output=json
     tickers = {'BOX':'1011797299780085', 'MSFT':'358464'}
-    cids = (',').join(tickers.values())
+    ids = (',').join(tickers.values())
 
-    prices = get_stock(cids)
+    prices = get_stock(ids)
     stocks = ''
     for price in prices:
         stocks += '%s: $%s (%s) ' % (price[0], price[1], price[2])
