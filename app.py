@@ -2,10 +2,31 @@
 import json
 import os
 import requests
+import redis
+import re
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from functools import wraps
 
 app = Flask(__name__)
+
+# Setup connection to redis
+if os.environ.get('RUNNING_IN_HEROKU'):
+    redis = redis.StrictRedis(host=os.environ.get('REDIS_URL'), port=6379, db=0)
+else:
+    redis = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Authorization decorator. If you decorate a function with this it will only
+# be able to execute if the slack api token is passed with the call.
+# Only works when running in heroku so that curl testing is easier during development.
+def require_slack_token(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if os.environ.get('RUNNING_IN_HEROKU'):
+            if request.form.get('token') not in os.environ.get('SLACK_API_KEYS').split(","):
+                return '401 - Not Authorized', 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 def get_stock(ids):
     """Use Google's Finance API to retrieve stock prices"""
@@ -44,7 +65,7 @@ def get_crypto():
 
 @app.route('/')
 def main():
-    return 'Hello World! ' + os.environ.get('TEST_KEY', None)
+    return 'Welcome to nocbot!'
 
 
 @app.route('/stock', methods=['POST'])
@@ -68,10 +89,59 @@ def stock():
     response = jsonify(text=stocks)
     return response
 
+@require_slack_token
+@app.route('/plusplus/addremove', methods=['POST'])
+def plusplus_add_remove():
+    text = request.form.get('text')
+    try:
+        m = re.match(r'.*\s?@(.*)\s?(\+\+|--)', text)
+        key = m.group(1)
+        operation = m.group(2)
+    # TODO: This really needs to be a better catch
+    except:
+        return "There was a problem with the regex"
+
+    key = key.strip().lower()
+    current_value = redis.get(key)
+    if current_value:
+        if operation == "++":
+            new_value = int(current_value) + 1
+            redis.set(key, new_value)
+        else:
+            new_value = int(current_value) - 1
+            redis.set(key, new_value)
+    else:
+        if operation == "++":
+            new_value = 1
+            redis.set(key, 1)
+        else:
+            new_value = -1
+            redis.set(key, -1)
+
+    response_text = "{} has {} points!".format(key, new_value)
+    response = jsonify(text=response)
+    return response
+
+
+@app.route('/plusplus/leaderboard', methods=['POST'])
+@require_slack_token
+def plusplus_leaderboard():
+    leaders = {}
+    for key in redis.scan_iter("*"):
+        leaders[key] = redis.get(key)
+    print "== LEADERBOARD =="
+    for key, value in sorted(leaders.iteritems(), key=lambda (k,v): (v,k),reverse=True):
+        print "{}: {}".format(key, value)
+
+    # TODO: I gotta figure out how to jsonify a list or a dict
+    # but wanna push this and test other stuff first.
+    return "DONE\n"
+
+
 if __name__ == '__main__':
-  if os.environ.get('RUNNING_IN_HEROKU'):
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-  else:
-    app.debug = True
-    app.run(host='127.0.0.1', port=5000)
+    if os.environ.get('RUNNING_IN_HEROKU'):
+        port = int(os.environ.get("PORT", 5000))
+        app.run(host='0.0.0.0', port=port)
+    else:
+        app.debug = True
+        app.run(host='127.0.0.1', port=5000)
