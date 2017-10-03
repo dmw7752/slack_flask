@@ -126,7 +126,6 @@ def plusplus_add_remove():
             redis.set(key, -1)
 
     response_text = "{} has {} points!".format(key, new_value)
-    print "KEY: " + key + "FULL RESPONSE TEXT: " + response_text
     json_response = jsonify(text=response_text)
     return json_response
 
