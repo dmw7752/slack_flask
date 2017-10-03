@@ -10,6 +10,10 @@ from functools import wraps
 
 app = Flask(__name__)
 
+# Lets get some logs out of heroku!
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
+
 # Setup connection to redis
 if os.environ.get('RUNNING_IN_HEROKU'):
     redis = redis.StrictRedis(host=os.environ.get('REDIS_URL'), port=6379, db=0)
