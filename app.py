@@ -104,6 +104,7 @@ def plusplus_add_remove():
         key = m.group(1)
         operation = m.group(2)
     # TODO: This really needs to be a better catch
+    # and more importantly, not do anything if it doenst match
     except:
         return "There was a problem with the regex"
 
@@ -125,8 +126,9 @@ def plusplus_add_remove():
             redis.set(key, -1)
 
     response_text = "{} has {} points!".format(key, new_value)
-    response = jsonify(text=response_text)
-    return response
+    print "KEY: " + key + "FULL RESPONSE TEXT: " + response_text
+    json_response = jsonify(text=response_text)
+    return json_response
 
 """
 @app.route('/plusplus/leaderboard', methods=['POST'])
@@ -148,8 +150,6 @@ if __name__ == '__main__':
     if os.environ.get('RUNNING_IN_HEROKU'):
         port = int(os.environ.get("PORT", 5000))
         app.run(host='0.0.0.0', port=port)
-    if os.environ.get('HEROKU_STAGING'):
-        app.debug = True
     else:
         app.debug = True
         app.run(host='127.0.0.1', port=5000)
