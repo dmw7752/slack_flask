@@ -122,7 +122,7 @@ def plusplus_add_remove():
     response = jsonify(text=response)
     return response
 
-
+"""
 @app.route('/plusplus/leaderboard', methods=['POST'])
 @require_slack_token
 def plusplus_leaderboard():
@@ -136,7 +136,7 @@ def plusplus_leaderboard():
     # TODO: I gotta figure out how to jsonify a list or a dict
     # but wanna push this and test other stuff first.
     return "DONE\n"
-
+"""
 
 if __name__ == '__main__':
     if os.environ.get('RUNNING_IN_HEROKU'):
