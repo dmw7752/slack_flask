@@ -4,6 +4,8 @@ import os
 import requests
 import redis
 import re
+import sys
+import logging
 
 from flask import Flask, jsonify, request
 from functools import wraps
@@ -16,7 +18,7 @@ app.logger.setLevel(logging.ERROR)
 
 # Setup connection to redis
 if os.environ.get('RUNNING_IN_HEROKU'):
-    redis = redis.StrictRedis(host=os.environ.get('REDIS_URL'), port=6379, db=0)
+    redis = redis.StrictRedis(host=os.environ.get('REDIS_URL').encode("idna"), port=6379, db=0)
 else:
     redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -146,6 +148,8 @@ if __name__ == '__main__':
     if os.environ.get('RUNNING_IN_HEROKU'):
         port = int(os.environ.get("PORT", 5000))
         app.run(host='0.0.0.0', port=port)
+    if os.environ.get('HEROKU_STAGING'):
+        app.debug = True
     else:
         app.debug = True
         app.run(host='127.0.0.1', port=5000)
