@@ -18,7 +18,7 @@ app.logger.setLevel(logging.ERROR)
 
 # Setup connection to redis
 if os.environ.get('RUNNING_IN_HEROKU'):
-    redis = redis.StrictRedis(host=os.environ.get('REDIS_URL').encode("idna"), port=6379, db=0)
+    redis = redis.from_url(os.environ.get('REDIS_URL'))
 else:
     redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
