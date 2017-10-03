@@ -4,6 +4,8 @@ import os
 import requests
 import redis
 import re
+import sys
+import logging
 
 from flask import Flask, jsonify, request
 from functools import wraps
