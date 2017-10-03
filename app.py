@@ -129,9 +129,9 @@ def plusplus_leaderboard():
     leaders = {}
     for key in redis.scan_iter("*"):
         leaders[key] = redis.get(key)
-    print "== LEADERBOARD =="
+    leaders_sorted = []
     for key, value in sorted(leaders.iteritems(), key=lambda (k,v): (v,k),reverse=True):
-        print "{}: {}".format(key, value)
+        leaders.append("{}: {}".format(key, value))
 
     # TODO: I gotta figure out how to jsonify a list or a dict
     # but wanna push this and test other stuff first.
