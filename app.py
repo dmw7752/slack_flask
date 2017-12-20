@@ -61,12 +61,12 @@ def get_stock(ids):
 def get_crypto():
     """Use coinbase API to return current price of BTC"""
 
-    url = "https://api.coinbase.com/v2/prices/spot?currency=USD"
+    url = "https://api.coinbase.com/v2/prices/USD/spot"
 
     r = requests.get(url)
-    j = json.loads(r.text)
-    price = j['data']['amount']
-    return price
+    data = r.json()
+    crypto_prices = ["\n{}: ${}".format(crypto['base'], crypto['amount']) for crypto in data['data']]
+    return crypto_prices
 
 
 @app.route('/')
@@ -89,8 +89,10 @@ def stock():
             stocks += ':chart_with_upwards_trend:\n'
         else:
             stocks += ':chart_with_downwards_trend:\n'
-    btc = get_crypto()
-    stocks += 'BTC: $%s' % btc
+
+    crypto_prices = get_crypto()
+    for crypto_price in crypto_prices:
+        stocks += crypto_price
 
     response = jsonify(text=stocks)
     return response
